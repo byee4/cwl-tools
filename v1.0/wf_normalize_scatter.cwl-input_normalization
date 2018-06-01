@@ -1,0 +1,62 @@
+#!/usr/bin/env cwltool
+
+cwlVersion: v1.0
+class: Workflow
+
+requirements:
+  - class: StepInputExpressionRequirement
+  - class: SubworkflowFeatureRequirement
+  - class: ScatterFeatureRequirement      # TODO needed?
+  - class: MultipleInputFeatureRequirement
+
+
+#hints:
+#  - class: ex:ScriptRequirement
+#    scriptlines:
+#      - "#!/bin/bash"
+
+
+inputs:
+
+  samples:
+    type:
+      type: array
+      items:
+        type: record
+        fields:
+          ip_bed:
+            type: File
+          ip_bam:
+            type: File
+          input_bam:
+            type: File
+
+outputs:
+
+  input_norm_peaks:
+    type: File[]
+    outputSource: step_normalize/output_input_norm_peaks
+
+  input_norm_peaks_full:
+    type: File[]
+    outputSource: step_normalize/output_input_norm_peaks_full
+
+  compressed_input_norm_peaks:
+    type: File[]
+    outputSource: step_normalize/output_compressed_input_norm_peaks
+
+steps:
+
+###########################################################################
+# Upstream
+###########################################################################
+  step_normalize:
+    run: wf_normalize.cwl
+    scatter: sample
+    in:
+      sample: samples
+    out: [
+      output_input_norm_peaks,
+      output_input_norm_peaks_full,
+      output_compressed_input_norm_peaks
+    ]

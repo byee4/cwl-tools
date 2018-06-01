@@ -1,0 +1,124 @@
+#!/usr/bin/env cwltool
+
+cwlVersion: v1.0
+class: Workflow
+
+requirements:
+  - class: StepInputExpressionRequirement
+  - class: SubworkflowFeatureRequirement
+  - class: ScatterFeatureRequirement      # TODO needed?
+  - class: MultipleInputFeatureRequirement
+
+
+#hints:
+#  - class: ex:ScriptRequirement
+#    scriptlines:
+#      - "#!/bin/bash"
+
+
+inputs:
+
+  sample:
+    type:
+      type: record
+      fields:
+        ip_bed:
+          type: File
+        ip_bam:
+          type: File
+        input_bam:
+          type: File
+
+outputs:
+
+  output_input_norm_peaks:
+    type: File
+    outputSource: step_input_normalize_peaks/inputnormedBed
+
+  output_input_norm_peaks_full:
+    type: File
+    outputSource: step_input_normalize_peaks/inputnormedBedfull
+
+  output_compressed_input_norm_peaks:
+    type: File
+    outputSource: step_compress_peaks/output_bed
+
+steps:
+
+###########################################################################
+# Upstream
+###########################################################################
+  step_parse_pair:
+    run: parse_pair.cwl
+    in:
+      sample: sample
+    out: [
+      ip_bed,
+      ip_bam,
+      input_bam
+    ]
+
+  step_index_ip:
+    run: samtools-index.cwl
+    in:
+      alignments: step_parse_pair/ip_bam
+    out: [alignments_with_index]
+
+  step_index_input:
+    run: samtools-index.cwl
+    in:
+      alignments: step_parse_pair/input_bam
+    out: [alignments_with_index]
+
+  step_ip_mapped_readnum:
+    run: samtools-mappedreadnum.cwl
+    in:
+      input: step_parse_pair/ip_bam
+      readswithoutbits:
+        default: 4
+      count:
+        default: true
+      output_name:
+        default: ip_mapped_readnum.txt
+    out: [output]
+
+  step_input_mapped_readnum:
+    run: samtools-mappedreadnum.cwl
+    in:
+      input: step_parse_pair/input_bam
+      readswithoutbits:
+        default: 4
+      count:
+        default: true
+      output_name:
+        default: input_mapped_readnum.txt
+    out: [output]
+
+
+
+###########################################################################
+# Downstream
+###########################################################################
+
+  step_input_normalize_peaks:
+    run: overlap_peakfi_with_bam_PE.cwl
+    in:
+      clipBamFile: step_index_ip/alignments_with_index
+      inputBamFile: step_index_input/alignments_with_index
+      peakFile: step_parse_pair/ip_bed
+      clipReadnum: step_ip_mapped_readnum/output
+      inputReadnum: step_input_mapped_readnum/output
+    out: [
+      inputnormedBed,
+      inputnormedBedfull
+    ]
+
+  step_compress_peaks:
+    run: peakscompress.cwl
+    in:
+      input_bed: step_input_normalize_peaks/inputnormedBed
+    out: [output_bed]
+
+doc: |
+  This workflow takes in a CLIP BED, CLIP BAM file and an input BAM file, and
+  performs input normalization

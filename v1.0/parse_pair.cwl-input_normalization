@@ -1,0 +1,44 @@
+#!/usr/bin/env cwltool
+
+### parses a paired record of input and ip BAM files and an IP peak BED file ###
+
+cwlVersion: v1.0
+class: ExpressionTool
+
+requirements:
+  - class: InlineJavascriptRequirement
+
+inputs:
+
+  sample:
+    type:
+      type: record
+      fields:
+        ip_bed:
+          type: File
+        ip_bam:
+          type: File
+        input_bam:
+          type: File
+
+outputs:
+
+  ip_bed:
+    type: File
+  ip_bam:
+    type: File
+  input_bam:
+    type: File
+
+expression: |
+   ${
+      return {
+        'ip_bed': inputs.sample.ip_bed,
+        'ip_bam': inputs.sample.ip_bam,
+        'input_bam': inputs.sample.input_bam
+      }
+    }
+
+doc: |
+  This tool returns the files inside a record object.
+    Usage:

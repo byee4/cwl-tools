@@ -1,0 +1,60 @@
+#!/usr/bin/env cwltool
+
+cwlVersion: v1.0
+
+class: CommandLineTool
+
+requirements:
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    coresMin: 8
+    coresMax: 16
+    ramMin: 32000
+    # tmpdirMin: 4000
+    # outdirMin: 4000
+
+baseCommand: [bamtofastq]
+
+inputs:
+  locus:
+    type: string?
+    inputBinding:
+      prefix: --locus
+      position: 0
+  reads_per_fastq:
+    type: int?
+    inputBinding:
+      prefix: --reads-per-fastq
+      position: 0
+  gemcode:
+    type: boolean
+    default: false
+    inputBinding:
+      prefix: --gemcode
+      position: 0
+  lr20:
+    type: boolean
+    default: false
+    inputBinding:
+      prefix: --lr20
+      position: 0
+  cr11:
+    type: boolean
+    default: false
+    inputBinding:
+      prefix: --cr11
+      position: 0
+  input_bam:
+    type: File
+    inputBinding:
+      position: 1
+  output_path:
+    type: string
+    inputBinding:
+      position: 2
+
+outputs:
+  output:
+    type: Directory
+    outputBinding:
+      glob: "$(inputs.output_path)"
