@@ -15,11 +15,11 @@ requirements:
 
 inputs:
 
-  rep1_bam_file:
+  rep1_clip_bam_file:
     type: File
   rep1_input_bam_file:
     type: File
-  rep2_bam_file:
+  rep2_clip_bam_file:
     type: File
   rep2_input_bam_file:
     type: File
@@ -37,7 +37,7 @@ steps:
   step_split_rep1_and_idr:
     run: wf_split_self_and_idr.cwl
     in:
-      clip_bam: rep1_bam_file
+      clip_bam: rep1_clip_bam_file
       input_bam: rep1_input_bam_file
       species: species
       merged_peaks_bed:
@@ -51,7 +51,7 @@ steps:
   step_split_rep2_and_idr:
     run: wf_split_self_and_idr.cwl
     in:
-      clip_bam: rep2_bam_file
+      clip_bam: rep2_clip_bam_file
       input_bam: rep2_input_bam_file
       species: species
       merged_peaks_bed:

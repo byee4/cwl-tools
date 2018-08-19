@@ -97,6 +97,9 @@ outputs:
     outputSource: rep1_input_norm_and_entropy/input_normed_full
 
 
+  rep1_compressed_bed:
+    type: File
+    outputSource: rep1_input_norm_and_entropy/compressed_bed
   rep1_entropy_full:
     type: File
     outputSource: rep1_input_norm_and_entropy/entropy_full
@@ -123,7 +126,9 @@ outputs:
     type: File
     outputSource: rep2_input_norm_and_entropy/input_normed_full
 
-
+  rep2_compressed_bed:
+    type: File
+    outputSource: rep2_input_norm_and_entropy/compressed_bed
   rep2_entropy_full:
     type: File
     outputSource: rep2_input_norm_and_entropy/entropy_full

@@ -20,12 +20,12 @@ inputs:
 
   rep1_clip_bam_file:
     type: File
-  rep1_clip_peaks_file:
+  rep1_peaks_bed_file:
     type: File
 
   rep2_clip_bam_file:
     type: File
-  rep2_clip_peaks_file:
+  rep2_peaks_bed_file:
     type: File
 
   input_bam_file:
@@ -64,11 +64,11 @@ steps:
     in:
       rep1_clip_bam_file: rep1_clip_bam_file
       rep1_input_bam_file: input_bam_file
-      rep1_peaks_bed_file: rep1_clip_peaks_file
+      rep1_peaks_bed_file: rep1_peaks_bed_file
 
       rep2_clip_bam_file: rep2_clip_bam_file
       rep2_input_bam_file: input_bam_file
-      rep2_peaks_bed_file: rep2_clip_peaks_file
+      rep2_peaks_bed_file: rep2_peaks_bed_file
 
       merged_peaks_bed: merged_peaks_bed
       merged_peaks_custombed: merged_peaks_custombed
