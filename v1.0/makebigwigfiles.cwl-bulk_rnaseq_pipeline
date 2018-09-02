@@ -32,8 +32,6 @@ requirements:
 
 
 baseCommand: [makebigwigfiles]
-#baseCommand: [singularityexec, eclip.img, /projects/ps-yeolab/software/makebigwigfiles-0.0.1/bin/make_bigwig_files.py]
-
 
 arguments: [
   --bw_pos,
@@ -76,27 +74,6 @@ outputs:
 
   negbw:
     type: File
-    # format: http://edamontology.org/format_3006
     outputBinding:
       glob: $(inputs.bam.nameroot).norm.neg.bw
 
-  #posbg:
-  #  type: File
-  #  outputBinding:
-  #    glob: $(inputs.bam.nameroot).No.pos.bg
-  #negbg:
-  #  type: File
-  #  outputBinding:
-  #    glob: $(inputs.bam.nameroot).No.neg.bg
-  #noposbg:
-  #  type: File
-  #  outputBinding:
-  #    glob: $(inputs.bam.nameroot).No.pos.bg
-  #nonegbg:
-  #  type: File
-  #  outputBinding:
-  #    glob: $(inputs.bam.nameroot).No.neg.bg
-  #nonegtbg:
-  #  type: File
-  #  outputBinding:
-  #    glob: $(inputs.bam.nameroot).No.negt.t.bg
