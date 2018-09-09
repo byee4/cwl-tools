@@ -66,7 +66,7 @@ steps:
       - output
 
   clipCountReadsBroadFeatures:
-    run: count_reads_broadfeatures_frombamfi_PEmap.cwl
+    run: count_reads_broadfeatures_frombamfi_map.cwl
     in:
       clipBamFile: clipBamFile
       gencodeGTFFile: gencodeGTFFile
@@ -75,7 +75,7 @@ steps:
       - outputFile
 
   inputCountReadsBroadFeatures:
-    run: count_reads_broadfeatures_frombamfi_PEmap.cwl
+    run: count_reads_broadfeatures_frombamfi_map.cwl
     in:
       clipBamFile: inputBamFile
       gencodeGTFFile: gencodeGTFFile
