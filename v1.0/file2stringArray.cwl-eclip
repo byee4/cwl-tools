@@ -1,4 +1,4 @@
-#!/usr/bin/env cwltool
+f#!/usr/bin/env cwltool
 
 ### doc: "Returns string array expression based on lines in a file" ###
 
