@@ -156,7 +156,7 @@ outputs:
   rescue_ratio:
     type: float
     outputSource: wf_rescue_ratio_two_inputs/rescue_ratio
-  true_reproducible_peaks:
+  reproducible_peaks:
     type: File
     outputSource: wf_rescue_ratio_two_inputs/true_reproducible_peaks
   self_consistency_ratio:
