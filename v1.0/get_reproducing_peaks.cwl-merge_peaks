@@ -4,6 +4,10 @@ cwlVersion: v1.0
 
 class: CommandLineTool
 
+hints:
+  DockerRequirement:
+    dockerPull: byee4/perl
+
 baseCommand: [get_reproducing_peaks.pl]
 
 inputs:

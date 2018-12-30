@@ -47,6 +47,12 @@ inputs:
     type: string
     default: "reproducible_peaks_from_rescue_ratio.custombed"
 
+  split_peaks_bed:
+    type: string
+    default: "temp_split_IDR_peaks.bed"
+  split_peaks_custombed:
+    type: string
+    default: "temp_split_IDR_peaks.custombed"
 
 outputs:
 
@@ -153,12 +159,12 @@ outputs:
   #    type: int
   #    outputSource: wf_get_reproducible_eclip_peaks/reproducing_peaks_count
 
-  # rescue_ratio:
-  #   type: float
-  #   outputSource: wf_rescue_ratio_2inputs/rescue_ratio
-  # reproducible_peaks:
-  #   type: File
-  #   outputSource: wf_rescue_ratio_2inputs/true_reproducible_peaks
+  rescue_ratio:
+    type: float
+    outputSource: wf_rescue_ratio_2inputs/rescue_ratio
+  reproducible_peaks:
+    type: File
+    outputSource: wf_rescue_ratio_2inputs/true_reproducible_peaks
   self_consistency_ratio:
     type: float
     outputSource: wf_self_consistency_ratio/self_consistency_ratio
@@ -205,22 +211,24 @@ steps:
   #     merged_peaks_custombed_file,
   #     reproducing_peaks_count
   #   ]
-  # wf_rescue_ratio_2inputs:
-  #   run: wf_rescue_ratio_2inputs.cwl
-  #   in:
-  #     rep1_clip_bam_file: rep1_clip_bam_file
-  #     rep1_input_bam_file: rep1_input_bam_file
-  #     rep1_peaks_bed_file: rep1_peaks_bed_file
-  #     rep2_clip_bam_file: rep2_clip_bam_file
-  #     rep2_input_bam_file: rep2_input_bam_file
-  #     rep2_peaks_bed_file: rep2_peaks_bed_file
-  #     species: species
-  #     merged_peaks_bed: merged_peaks_bed_from_rr
-  #     merged_peaks_custombed: merged_peaks_custombed_from_rr
-  #   out: [
-  #     rescue_ratio,
-  #     true_reproducible_peaks
-  #   ]
+  wf_rescue_ratio_2inputs:
+    run: wf_rescue_ratio_2inputs.cwl
+    in:
+      rep1_clip_bam_file: rep1_clip_bam_file
+      rep1_input_bam_file: rep1_input_bam_file
+      rep1_peaks_bed_file: rep1_peaks_bed_file
+      rep2_clip_bam_file: rep2_clip_bam_file
+      rep2_input_bam_file: rep2_input_bam_file
+      rep2_peaks_bed_file: rep2_peaks_bed_file
+      species: species
+      merged_peaks_bed: merged_peaks_bed_from_rr
+      merged_peaks_custombed: merged_peaks_custombed_from_rr
+      split_peaks_bed: split_peaks_bed
+      split_peaks_custombed: split_peaks_custombed
+    out: [
+      rescue_ratio,
+      true_reproducible_peaks
+    ]
   wf_self_consistency_ratio:
     run: wf_self_consistency_ratio.cwl
     in:

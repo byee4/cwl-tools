@@ -6,6 +6,10 @@ class: CommandLineTool
 
 baseCommand: [samtools, view]
 
+hints:
+  DockerRequirement:
+    dockerPull: byee4/samtools
+
 inputs:
 
   countFlag:
