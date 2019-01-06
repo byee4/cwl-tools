@@ -6,7 +6,7 @@ class: CommandLineTool
 
 hints:
   DockerRequirement:
-    dockerPull: byee4/idr
+    dockerPull: brianyee/idr
 
 baseCommand: [idr]
 

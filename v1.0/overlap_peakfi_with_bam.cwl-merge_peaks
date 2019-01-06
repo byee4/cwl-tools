@@ -12,7 +12,7 @@ requirements:
 
 hints:
   DockerRequirement:
-    dockerPull: byee4/perl
+    dockerPull: brianyee/perl
 
 baseCommand: [overlap_peakfi_with_bam_PE.pl]
 

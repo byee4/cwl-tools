@@ -16,7 +16,7 @@ requirements:
 
 hints:
   DockerRequirement:
-    dockerPull: byee4/clipper
+    dockerPull: brianyee/clipper
 
 baseCommand: [clipper]
 

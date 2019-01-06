@@ -17,7 +17,7 @@ requirements:
 
 hints:
   DockerRequirement:
-    dockerPull: byee4/perl
+    dockerPull: brianyee/perl
 
 baseCommand: [compress_l2foldenrpeakfi_for_replicate_overlapping_bedformat.pl]
 
