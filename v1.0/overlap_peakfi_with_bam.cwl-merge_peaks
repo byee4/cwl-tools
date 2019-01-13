@@ -10,11 +10,11 @@ requirements:
     coresMax: 16
     ramMin: 16000
 
-hints:
-  DockerRequirement:
-    dockerPull: brianyee/perl
+# hints:
+#   DockerRequirement:
+#     dockerPull: brianyee/perl
 
-baseCommand: [overlap_peakfi_with_bam_PE.pl]
+baseCommand: [overlap_peakfi_with_bam.pl]
 
 inputs:
 

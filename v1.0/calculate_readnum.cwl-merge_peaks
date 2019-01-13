@@ -6,9 +6,9 @@ class: CommandLineTool
 
 baseCommand: [samtools, view]
 
-hints:
-  DockerRequirement:
-    dockerPull: brianyee/samtools
+# hints:
+#   DockerRequirement:
+#     dockerPull: brianyee/samtools
 
 inputs:
 

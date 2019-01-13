@@ -10,9 +10,9 @@ requirements:
     coresMax: 16
     ramMin: 16000
 
-hints:
-  DockerRequirement:
-    dockerPull: brianyee/perl
+# hints:
+#   DockerRequirement:
+#     dockerPull: brianyee/perl
 
 baseCommand: [make_informationcontent_from_peaks.pl]
 

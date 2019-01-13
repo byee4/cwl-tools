@@ -4,9 +4,9 @@ cwlVersion: v1.0
 
 class: CommandLineTool
 
-hints:
-  DockerRequirement:
-    dockerPull: brianyee/perl
+# hints:
+#   DockerRequirement:
+#     dockerPull: brianyee/perl
 
 baseCommand: [get_reproducing_peaks.pl]
 
