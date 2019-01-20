@@ -2,7 +2,7 @@
 
 doc: |
   This workflow essentially restructures the inputs before sending
-  to wf_full_IDR_pipeline_1input.cwl
+  to wf_full_IDR_pipeline_2inputs.cwl
 
 cwlVersion: v1.0
 class: Workflow

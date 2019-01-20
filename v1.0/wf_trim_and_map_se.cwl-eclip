@@ -213,20 +213,13 @@ steps:
     out:
       [alignments_with_index]
 
-  # X_sortlexico:
-  #   run: namesort.cwl
-  #   in:
-  #     name_sort: sort_names
-  #     input_sort_bam: A_map_genome/aligned
-  #   out: [output_sort_bam]
-
   X_barcodecollapsese:
-    # run: barcodecollapse_se.cwl
-    run: barcodecollapse_se_nostats.cwl
+    run: barcodecollapse_se.cwl
+    # run: barcodecollapse_se_nostats.cwl
     in:
       input_barcodecollapsese_bam: A_index/alignments_with_index
-    # out: [output_barcodecollapsese_bam, output_barcodecollapsese_metrics]
-    out: [output_barcodecollapsese_bam]
+    out: [output_barcodecollapsese_bam, output_barcodecollapsese_metrics]
+    # out: [output_barcodecollapsese_bam]
 
   X_sort:
     run: sort.cwl
