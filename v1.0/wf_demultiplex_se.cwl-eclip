@@ -44,7 +44,12 @@ outputs:
   A_output_demuxed_read1:
     type: File
     outputSource: AB_demux/demuxedAfwd
-
+  read_name:
+    type: string
+    outputSource: AB_demux/name
+  dataset_name:
+    type: string
+    outputSource: AB_demux/output_dataset
   ### TRIM/CUTADAPT PARAMS ###
 
 

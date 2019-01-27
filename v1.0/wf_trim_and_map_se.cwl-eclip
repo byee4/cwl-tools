@@ -40,7 +40,12 @@ inputs:
   #   type: File
   read1:
     type: File
+  read_name:
+    type: string
+  dataset_name:
+    type: string
 
+  ## Defaults (don't change unless we have a very good reason) ##
   sort_names:
     type: boolean
     default: true
@@ -51,6 +56,12 @@ inputs:
     type: string
     default: "0.1"
 
+  fastq_suffix:
+    type: string
+    default: ".fq"
+  bam_suffix:
+    type: string
+    default: ".bam"
 outputs:
 
   X_output_trim_first:
@@ -69,7 +80,7 @@ outputs:
 
   A_output_maprepeats_mapped_to_genome:
     type: File
-    outputSource: A_map_repeats/aligned
+    outputSource: rename_mapped_repeats/outfile
   A_output_maprepeats_stats:
     type: File
     outputSource: A_map_repeats/mappingstats
@@ -82,7 +93,7 @@ outputs:
 
   A_output_mapgenome_mapped_to_genome:
     type: File
-    outputSource: A_map_genome/aligned
+    outputSource: rename_mapped_genome/outfile
   A_output_mapgenome_stats:
     type: File
     outputSource: A_map_genome/mappingstats
@@ -99,9 +110,9 @@ outputs:
   X_output_barcodecollapsese_bam:
     type: File
     outputSource: X_barcodecollapsese/output_barcodecollapsese_bam
-  # X_output_barcodecollapsese_metrics:
-  #   type: File?
-  #   outputSource: X_barcodecollapsese/output_barcodecollapsese_metrics
+  X_output_barcodecollapsese_metrics:
+    type: File
+    outputSource: X_barcodecollapsese/output_barcodecollapsese_metrics
 
   X_output_sorted_bam:
     type: File
@@ -175,11 +186,34 @@ steps:
       starsettings,
       mappingstats
     ]
-
+  rename_mapped_repeats:
+    run: rename.cwl
+    in:
+      srcfile: A_map_repeats/aligned
+      suffix:
+        default: ".bam"
+      newname:
+        source: read1
+        valueFrom: ${ return self.nameroot + ".repeat-mapped"; }
+    out: [
+      outfile
+    ]
+  rename_unmapped_repeats:
+    run: rename.cwl
+    in:
+      srcfile: A_map_repeats/output_map_unmapped_fwd
+      suffix:
+        default: ".fq"
+      newname:
+        source: read1
+        valueFrom: ${ return self.nameroot + ".repeat-unmapped"; }
+    out: [
+      outfile
+    ]
   A_sort_repunmapped_fastq:
     run: fastqsort.cwl
     in:
-      input_fastqsort_fastq: A_map_repeats/output_map_unmapped_fwd
+      input_fastqsort_fastq: rename_unmapped_repeats/outfile
     out:
       [output_fastqsort_sortedfastq]
 
@@ -198,11 +232,32 @@ steps:
       starsettings,
       mappingstats
     ]
-
+  rename_mapped_genome:
+    run: rename.cwl
+    in:
+      srcfile: A_map_genome/aligned
+      suffix:
+        default: ".bam"
+      newname:
+        source: read1
+        valueFrom: ${ return self.nameroot + ".genome-mapped"; }
+    out: [
+      outfile
+    ]
+  # rename_unmapped_genome:
+  #   run: rename.cwl
+  #   in:
+  #     srcfile: A_map_genome/output_map_unmapped_fwd
+  #     suffix: fastq_suffix
+  #     newname:
+  #       valueFrom: ${return dataset_name + "." + read_name + ".genome-unmapped"}
+  #   out: [
+  #     outfile
+  #   ]
   A_sort:
     run: sort.cwl
     in:
-      input_sort_bam: A_map_genome/aligned
+      input_sort_bam: rename_mapped_genome/outfile
     out:
       [output_sort_bam]
 

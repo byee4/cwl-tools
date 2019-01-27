@@ -122,9 +122,9 @@ outputs:
     type: File
     outputSource: b1_trim_and_map/A_output_sorted_bam
 
-  # b1_output_barcodecollapsese_metrics:
-  #   type: File?
-  #   outputSource: b1_trim_and_map/X_output_barcodecollapsese_metrics
+  b1_output_barcodecollapsese_metrics:
+    type: File
+    outputSource: b1_trim_and_map/X_output_barcodecollapsese_metrics
 
   b1_output_rmdup_sorted_bam:
     type: File
@@ -166,6 +166,8 @@ steps:
       # AB_a_adapters,
       # AB_a_adapters_default,
       # AB_A_adapters
+      read_name,
+      dataset_name
     ]
 
   # trimfirst_file2string:
@@ -196,6 +198,8 @@ steps:
       # A_adapters: demultiplex/AB_A_adapters
       read1: demultiplex/A_output_demuxed_read1
       # read2: demultiplex/A_output_demuxed_read2
+      read_name: demultiplex/read_name
+      dataset_name: demultiplex/dataset_name
     out: [
       X_output_trim_first,
       X_output_trim_first_metrics,
