@@ -16,9 +16,6 @@ inputs:
   r1FastqGz:
     doc: "Read1 after trimming inline barcodes"
     type: File
-  r2FastqGz:
-    doc: "Read2 after trimming inline barcodes"
-    type: File
   rmRepBam:
     doc: "BAM file after removing repetitive elements (after 2nd STAR mapping)"
     type: File
@@ -75,13 +72,11 @@ outputs:
   output_concatenated_rmDup_sam_file:
     doc: "Final remove duplicate SAM-like file"
     type: File
-    # outputSource: step_concatenate_rmDup/concatenated
     outputSource: step_gzip_rmDup/gzipped
 
   output_concatenated_preRmDup_sam_file:
     doc: "Final duplicated SAM-like file"
     type: File
-    # outputSource: step_concatenate_preRmDup/concatenated
     outputSource: step_gzip_preRmDup/gzipped
 
   output_parsed_files:
@@ -93,7 +88,7 @@ outputs:
     doc: "Combined output file containing read stats for all UMI prefixes"
     type: File
     outputSource: step_combine_parsed/output
-  
+
   output_combined_reparsed_file:
     doc: "re-parsed file"
     type: File
@@ -102,10 +97,9 @@ outputs:
 steps:
 
   step_map_repetitive_elements:
-    run: map_repetitive_elements_pe.cwl
+    run: map_repetitive_elements_se.cwl
     in:
       read1: r1FastqGz
-      read2: r2FastqGz
       bowtie2_db: bowtie2_db
       bowtie2_prefix: bowtie2_prefix
       file_list_file: fileListFile1
@@ -113,14 +107,14 @@ steps:
       - rep_sam
 
   step_splitbam_repsam:
-    run: splitbam_pe.cwl
+    run: splitbam_se_shapeseq.cwl
     in:
       sam_file: step_map_repetitive_elements/rep_sam
     out:
       - repsam_s
 
   step_splitbam_rmrepbam:
-    run: splitbam_pe.cwl
+    run: splitbam_se_shapeseq.cwl
     in:
       sam_file: rmRepBam
     out:
@@ -145,7 +139,7 @@ steps:
     doc: |
       Takes the repeat-mapped sam-like file, and the remove-replicate
       bam file, and uses UMI information to remove PCR duplicates.
-    run: deduplicate_pe.cwl
+    run: deduplicate_se.cwl
     in:
       gencodeGTF: gencodeGTF
       gencodeTableBrowser: gencodeTableBrowser
@@ -220,7 +214,7 @@ steps:
       - output
 
   step_reparse:
-    run: reparse_samfile_updatedchrM_fixmultenstsort_PE.cwl
+    run: reparse_samfile_updatedchrM_fixmultenstsort_SE.cwl
     in:
       sam_file: step_gzip_rmDup/gzipped
       chrM_genelist_file: chrM_genelist_file

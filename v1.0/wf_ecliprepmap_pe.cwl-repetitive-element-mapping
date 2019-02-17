@@ -51,6 +51,11 @@ inputs:
   repMaskBEDFile:
     type: File
 
+  chrM_genelist_file:
+    type: File
+  mirbase_gff3_file:
+    type: File
+
   prefixes:
     type: string[]
     default: [
@@ -67,12 +72,12 @@ outputs:
   ### PRE RMDUPED SAM FILE INTERMEDIATES ###
 
 
-  output_barcode1_concatenated_pre_rmDup_sam_file:
-    type: File
-    outputSource: step_ecliprepmap_barcode1/output_concatenated_preRmDup_sam_file
-  output_barcode2_concatenated_pre_rmDup_sam_file:
-    type: File
-    outputSource: step_ecliprepmap_barcode2/output_concatenated_preRmDup_sam_file
+  # output_barcode1_concatenated_pre_rmDup_sam_file:
+  #   type: File
+  #   outputSource: step_ecliprepmap_barcode1/output_concatenated_preRmDup_sam_file
+  # output_barcode2_concatenated_pre_rmDup_sam_file:
+  #   type: File
+  #   outputSource: step_ecliprepmap_barcode2/output_concatenated_preRmDup_sam_file
 
 
   ### PRE RMDUPED SAM FILE FINAL OUTPUTS ###
@@ -80,7 +85,7 @@ outputs:
 
   output_ip_concatenated_pre_rmDup_sam_file:
     type: File
-    outputSource: step_concatenate_pre_rmDup/concatenated
+    outputSource: step_gzip_preRmDup/gzipped
   output_input_concatenated_pre_rmDup_sam_file:
     type: File
     outputSource: step_ecliprepmap_input/output_concatenated_preRmDup_sam_file
@@ -89,12 +94,12 @@ outputs:
   ### RMDUPED SAM FILE INTERMEDIATES ###
 
 
-  output_barcode1_concatenated_rmDup_sam_file:
-    type: File
-    outputSource: step_ecliprepmap_barcode1/output_concatenated_rmDup_sam_file
-  output_barcode2_concatenated_rmDup_sam_file:
-    type: File
-    outputSource: step_ecliprepmap_barcode2/output_concatenated_rmDup_sam_file
+  # output_barcode1_concatenated_rmDup_sam_file:
+  #   type: File
+  #   outputSource: step_ecliprepmap_barcode1/output_concatenated_rmDup_sam_file
+  # output_barcode2_concatenated_rmDup_sam_file:
+  #   type: File
+  #   outputSource: step_ecliprepmap_barcode2/output_concatenated_rmDup_sam_file
 
 
   ### RMDUPED SAM FILE FINAL OUTPUTS ###
@@ -102,7 +107,7 @@ outputs:
 
   output_ip_concatenated_rmDup_sam_file:
     type: File
-    outputSource: step_concatenate_rmDup/concatenated
+    outputSource: step_gzip_rmDup/gzipped
   output_input_concatenated_rmDup_sam_file:
     type: File
     outputSource: step_ecliprepmap_input/output_concatenated_rmDup_sam_file
@@ -115,13 +120,25 @@ outputs:
     outputSource: step_combine_parsed/output
   output_input_parsed:
     type: File
-    outputSource: step_ecliprepmap_input/output_combined_parsed_file
+    outputSource: step_ecliprepmap_input/output_combined_reparsed_file
+  output_ip_reparsed:
+    type: File
+    outputSource: step_reparse/reparsed_file
+  output_input_reparsed:
+    type: File
+    outputSource: step_ecliprepmap_input/output_combined_reparsed_file
   output_nopipes:
     type: File
     outputSource: step_calculate_fold_change_from_parsed_files/out_file_nopipes_file
   output_withpipes:
     type: File
     outputSource: step_calculate_fold_change_from_parsed_files/out_file_withpipes_file
+  output_reparsed_nopipes:
+    type: File
+    outputSource: step_calculate_fold_change_from_reparsed_files/out_file_nopipes_file
+  output_reparsed_withpipes:
+    type: File
+    outputSource: step_calculate_fold_change_from_reparsed_files/out_file_withpipes_file
 
 steps:
 
@@ -148,6 +165,8 @@ steps:
       gencodeGTF: gencodeGTF
       gencodeTableBrowser: gencodeTableBrowser
       repMaskBEDFile: repMaskBEDFile
+      chrM_genelist_file: chrM_genelist_file
+      mirbase_gff3_file: mirbase_gff3_file
       prefixes: prefixes
     out:
       - output_repeat_mapped_sam_file
@@ -177,6 +196,8 @@ steps:
       gencodeGTF: gencodeGTF
       gencodeTableBrowser: gencodeTableBrowser
       repMaskBEDFile: repMaskBEDFile
+      chrM_genelist_file: chrM_genelist_file
+      mirbase_gff3_file: mirbase_gff3_file
       prefixes: prefixes
     out:
       - output_repeat_mapped_sam_file
@@ -186,6 +207,7 @@ steps:
       - output_concatenated_preRmDup_sam_file
       - output_parsed_files
       - output_combined_parsed_file
+      - output_combined_reparsed_file
 
 ###########################################################################
 # Combine rmdup and pre-rmdup files from each barcode into single output
@@ -204,10 +226,17 @@ steps:
         source: dataset
         valueFrom: |
           ${
-            return self + ".preRmDup.sam";
+            return self + ".RmDup.sam";
           }
     out:
       - concatenated
+
+  step_gzip_rmDup:
+    run: gzip.cwl
+    in:
+      input: step_concatenate_rmDup/concatenated
+    out:
+      - gzipped
 
   step_concatenate_pre_rmDup:
     doc: "concatenates all pre-rmduped sam files using cat"
@@ -227,6 +256,13 @@ steps:
     out:
       - concatenated
 
+  step_gzip_preRmDup:
+    run: gzip.cwl
+    in:
+      input: step_concatenate_pre_rmDup/concatenated
+    out:
+      - gzipped
+
   step_combine_parsed:
     doc: "concatenates all final statistics using custom perl script"
     run: combine.cwl
@@ -245,6 +281,16 @@ steps:
     out:
       - output
 
+  step_reparse:
+    run: reparse_samfile_updatedchrM_fixmultenstsort_PE.cwl
+    in:
+      sam_file: step_gzip_rmDup/gzipped
+      chrM_genelist_file: chrM_genelist_file
+      fileList1: fileListFile1
+      fileList2: fileListFile2
+      mirbase_file: mirbase_gff3_file
+    out:
+      - reparsed_file
 ###########################################################################
 # Repeat-map input sample (1 barcode)
 ###########################################################################
@@ -268,6 +314,8 @@ steps:
       gencodeGTF: gencodeGTF
       gencodeTableBrowser: gencodeTableBrowser
       repMaskBEDFile: repMaskBEDFile
+      chrM_genelist_file: chrM_genelist_file
+      mirbase_gff3_file: mirbase_gff3_file
       prefixes: prefixes
     out:
       - output_repeat_mapped_sam_file
@@ -277,6 +325,7 @@ steps:
       - output_concatenated_preRmDup_sam_file
       - output_parsed_files
       - output_combined_parsed_file
+      - output_combined_reparsed_file
 
 ###########################################################################
 # Combine parsed files and calculate fold change/entropy
@@ -287,6 +336,15 @@ steps:
     in:
       ip_parsed_file: step_combine_parsed/output
       input_parsed_file: step_ecliprepmap_input/output_combined_parsed_file
+    out:
+      - out_file_nopipes_file
+      - out_file_withpipes_file
+
+  step_calculate_fold_change_from_reparsed_files:
+    run: calculate_fold_change_from_parsed_files.cwl
+    in:
+      ip_parsed_file: step_reparse/reparsed_file
+      input_parsed_file: step_ecliprepmap_input/output_combined_reparsed_file
     out:
       - out_file_nopipes_file
       - out_file_withpipes_file

@@ -114,7 +114,7 @@ steps:
 ###########################################################################
 
   step_ecliprepmap_barcode1:
-    run: wf_ecliprepmap_se_1sample.cwl
+    run: wf_ecliprepmap_se_shapeseq_1sample.cwl
     in:
       dataset:
         source: dataset
@@ -150,7 +150,7 @@ steps:
 ###########################################################################
 
   step_ecliprepmap_input:
-    run: wf_ecliprepmap_se_1sample.cwl
+    run: wf_ecliprepmap_se_shapeseq_1sample.cwl
     in:
       dataset:
         source: dataset
