@@ -46,6 +46,7 @@ inputs:
     type: string
 
   ## Defaults (don't change unless we have a very good reason) ##
+  
   sort_names:
     type: boolean
     default: true
@@ -62,18 +63,19 @@ inputs:
   bam_suffix:
     type: string
     default: ".bam"
+    
 outputs:
 
   X_output_trim_first:
     type: File[]
-    outputSource: X_trim/output_trim
+    outputSource: step_gzip_sort_X_trim/gzipped
   X_output_trim_first_metrics:
     type: File
     outputSource: X_trim/output_trim_report
 
   X_output_trim_again:
     type: File[]
-    outputSource: X_trim_again/output_trim
+    outputSource: step_gzip_sort_X_trim_again/gzipped
   X_output_trim_again_metrics:
     type: File
     outputSource: X_trim_again/output_trim_report
@@ -103,9 +105,6 @@ outputs:
   A_output_sorted_bam:
     type: File
     outputSource: A_sort/output_sort_bam
-  # A_output_sorted_bam_index:
-  #   type: File
-  #   outputSource: A_index/output_index_bai
 
   X_output_barcodecollapsese_bam:
     type: File
@@ -150,7 +149,15 @@ steps:
       times: trim_times
       error_rate: trim_error_rate
     out: [output_trim, output_trim_report]
-
+  
+  step_gzip_sort_X_trim:
+    run: gzip.cwl
+    scatter: input
+    in:
+      input: X_trim/output_trim
+    out:
+      - gzipped
+      
   X_trim_again:
     run: trim_se.cwl
     in:
@@ -160,7 +167,7 @@ steps:
       times: trim_times
       error_rate: trim_error_rate
     out: [output_trim, output_trim_report]
-
+  
   A_sort_trimmed_fastq:
     run: fastqsort.cwl
     scatter: input_fastqsort_fastq
@@ -168,7 +175,15 @@ steps:
       input_fastqsort_fastq: X_trim_again/output_trim
     out:
       [output_fastqsort_sortedfastq]
-
+      
+  step_gzip_sort_X_trim_again:
+    run: gzip.cwl
+    scatter: input
+    in:
+      input: A_sort_trimmed_fastq/output_fastqsort_sortedfastq
+    out:
+      - gzipped
+      
 ###########################################################################
 # Mapping
 ###########################################################################
@@ -176,8 +191,6 @@ steps:
   A_map_repeats:
     run: star-repeatmapping.cwl
     in:
-      # outFileNamePrefix: A_parse_records/repName
-      # outFilterMultimapNmax: repeatMultimapNmax
       readFilesIn: A_sort_trimmed_fastq/output_fastqsort_sortedfastq
       genomeDir: repeatElementGenomeDir
     out: [
@@ -216,12 +229,17 @@ steps:
       input_fastqsort_fastq: rename_unmapped_repeats/outfile
     out:
       [output_fastqsort_sortedfastq]
-
+  
+  step_gzip_sort_repunmapped_fastq:
+    run: gzip.cwl
+    in:
+      input: A_sort_repunmapped_fastq/output_fastqsort_sortedfastq
+    out:
+      - gzipped
+      
   A_map_genome:
     run: star-genome.cwl
     in:
-      # outFileNamePrefix: A_parse_records/rmRepName
-      # outFilterMultimapNmax: genomeMultimapNmax
       readFilesIn: 
         source: A_sort_repunmapped_fastq/output_fastqsort_sortedfastq
         valueFrom: ${ return [ self ]; }
@@ -244,16 +262,7 @@ steps:
     out: [
       outfile
     ]
-  # rename_unmapped_genome:
-  #   run: rename.cwl
-  #   in:
-  #     srcfile: A_map_genome/output_map_unmapped_fwd
-  #     suffix: fastq_suffix
-  #     newname:
-  #       valueFrom: ${return dataset_name + "." + read_name + ".genome-unmapped"}
-  #   out: [
-  #     outfile
-  #   ]
+
   A_sort:
     run: sort.cwl
     in:
