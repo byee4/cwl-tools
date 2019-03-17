@@ -71,7 +71,17 @@ inputs:
     type: File
   mirbase_gff3_file:
     type: File
-
+    
+  prefixes:
+    type: string[]
+    default: [
+      "AA","AC","AG","AT","AN",
+      "CA","CC","CG","CT","CN",
+      "GA","GC","GG","GT","GN",
+      "TA","TC","TG","TT","TN",
+      "NA","NC","NG","NT","NN"
+    ]
+    
   ### region-level options ###
 
   trna_bed_file:
@@ -348,6 +358,7 @@ steps:
       repMaskBEDFile: repMaskBEDFile
       chrM_genelist_file: chrM_genelist_file
       mirbase_gff3_file: mirbase_gff3_file
+      prefixes: prefixes
       trna_bed_file: trna_bed_file
       lncrna_table_file: lncrna_table_file
       lncrna_full_file: lncrna_full_file

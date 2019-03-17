@@ -91,7 +91,7 @@ outputs:
     outputSource: A_map_repeats/starsettings
   A_output_sort_repunmapped_fastq:
     type: File
-    outputSource: A_sort_repunmapped_fastq/output_fastqsort_sortedfastq
+    outputSource: step_gzip_sort_repunmapped_fastq/gzipped
 
   A_output_mapgenome_mapped_to_genome:
     type: File
@@ -104,7 +104,7 @@ outputs:
     outputSource: A_map_genome/starsettings
   A_output_sorted_bam:
     type: File
-    outputSource: A_sort/output_sort_bam
+    outputSource: X_sortlexico/output_sort_bam
 
   X_output_barcodecollapsese_bam:
     type: File
@@ -116,10 +116,6 @@ outputs:
   X_output_sorted_bam:
     type: File
     outputSource: X_sort/output_sort_bam
-
-  X_output_index_bai:
-    type: File
-    outputSource: X_index/output_index_bai
 
 steps:
 
@@ -203,7 +199,7 @@ steps:
     run: rename.cwl
     in:
       srcfile: A_map_repeats/aligned
-      suffix:
+      suffix: 
         default: ".bam"
       newname:
         source: read1
@@ -215,7 +211,7 @@ steps:
     run: rename.cwl
     in:
       srcfile: A_map_repeats/output_map_unmapped_fwd
-      suffix:
+      suffix: 
         default: ".fq"
       newname:
         source: read1
@@ -254,7 +250,7 @@ steps:
     run: rename.cwl
     in:
       srcfile: A_map_genome/aligned
-      suffix:
+      suffix: 
         default: ".bam"
       newname:
         source: read1
@@ -263,39 +259,31 @@ steps:
       outfile
     ]
 
-  A_sort:
-    run: sort.cwl
+  X_sortlexico:
+    run: namesort.cwl
     in:
+      name_sort: sort_names
       input_sort_bam: rename_mapped_genome/outfile
-    out:
-      [output_sort_bam]
+    out: [output_sort_bam]
 
   A_index:
     run: samtools-index.cwl
     in:
-      alignments: A_sort/output_sort_bam
+      alignments: X_sortlexico/output_sort_bam
     out:
       [alignments_with_index]
 
   X_barcodecollapsese:
     run: barcodecollapse_se.cwl
-    # run: barcodecollapse_se_nostats.cwl
     in:
       input_barcodecollapsese_bam: A_index/alignments_with_index
     out: [output_barcodecollapsese_bam, output_barcodecollapsese_metrics]
-    # out: [output_barcodecollapsese_bam]
 
   X_sort:
     run: sort.cwl
     in:
       input_sort_bam: X_barcodecollapsese/output_barcodecollapsese_bam
     out: [output_sort_bam]
-
-  X_index:
-    run: index.cwl
-    in:
-      input_index_bam: X_sort/output_sort_bam
-    out: [output_index_bai]
 
 ###########################################################################
 # Downstream
