@@ -104,7 +104,7 @@ outputs:
     outputSource: A_map_genome/starsettings
   A_output_sorted_bam:
     type: File
-    outputSource: X_sortlexico/output_sort_bam
+    outputSource: A_sort/output_sort_bam
 
   X_output_barcodecollapsese_bam:
     type: File
@@ -265,13 +265,18 @@ steps:
       name_sort: sort_names
       input_sort_bam: rename_mapped_genome/outfile
     out: [output_sort_bam]
-
+    
+  A_sort:
+    run: sort.cwl
+    in:
+      input_sort_bam: X_sortlexico/output_sort_bam
+    out: [output_sort_bam]
+      
   A_index:
     run: samtools-index.cwl
     in:
-      alignments: X_sortlexico/output_sort_bam
-    out:
-      [alignments_with_index]
+      alignments: A_sort/output_sort_bam
+    out: [alignments_with_index]
 
   X_barcodecollapsese:
     run: barcodecollapse_se.cwl

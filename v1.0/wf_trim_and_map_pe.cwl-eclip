@@ -290,17 +290,11 @@ steps:
       name_sort: sort_names
       input_sort_bam: rename_mapped_genome/outfile
     out: [output_sort_bam]
-  A_index:
-    run: samtools-index.cwl
-    in:
-      alignments: X_sortlexico/output_sort_bam
-    out:
-      [alignments_with_index]
       
   X_barcodecollapsepe:
     run: barcodecollapse_pe.cwl
     in:
-      input_barcodecollapsepe_bam: A_index/alignments_with_index
+      input_barcodecollapsepe_bam: X_sortlexico/output_sort_bam
     out: [output_barcodecollapsepe_bam, output_barcodecollapsepe_metrics]
 
   X_sort:
