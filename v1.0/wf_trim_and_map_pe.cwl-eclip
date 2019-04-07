@@ -225,14 +225,10 @@ steps:
     out: [
       outfile
     ]
-  rename_unmapped_repeats:
+  rename_read1_unmapped_repeats:
     run: rename.cwl
-    scatter: srcfile
     in:
-      srcfile: [
-        A_map_repeats/output_map_unmapped_fwd,
-        A_map_repeats/output_map_unmapped_rev
-      ]
+      srcfile: A_map_repeats/output_map_unmapped_fwd
       suffix:
         default: ".fq"
       newname:
@@ -241,11 +237,26 @@ steps:
     out: [
       outfile
     ]
+  rename_read2_unmapped_repeats:
+    run: rename.cwl
+    in:
+      srcfile: A_map_repeats/output_map_unmapped_rev
+      suffix:
+        default: ".fq"
+      newname:
+        source: read2
+        valueFrom: ${ return self.nameroot + ".repeat-unmapped"; }
+    out: [
+      outfile
+    ]
   A_sort_repunmapped_fastq:
     run: fastqsort.cwl
     scatter: input_fastqsort_fastq
     in:
-      input_fastqsort_fastq: rename_unmapped_repeats/outfile
+      input_fastqsort_fastq: [
+        rename_read1_unmapped_repeats/outfile,
+        rename_read2_unmapped_repeats/outfile
+      ]
     out:
       [output_fastqsort_sortedfastq]
       
