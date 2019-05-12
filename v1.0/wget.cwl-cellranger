@@ -1,0 +1,30 @@
+#!/usr/bin/env cwltool
+
+cwlVersion: v1.0
+
+class: CommandLineTool
+
+requirements:
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    coresMin: 1
+    coresMax: 16
+
+baseCommand: [wget]
+
+inputs:
+  output_file_name:
+    type: string
+    inputBinding:
+      prefix: -O
+      position: 1
+  url:
+    type: string
+    inputBinding:
+      position: 2
+
+outputs:
+  output:
+    type: File
+    outputBinding:
+      glob: "$(inputs.output_file_name)"

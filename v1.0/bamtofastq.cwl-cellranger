@@ -1,0 +1,36 @@
+#!/usr/bin/env cwltool
+
+cwlVersion: v1.0
+
+class: CommandLineTool
+
+requirements:
+  - class: InlineJavascriptRequirement
+  - class: ResourceRequirement
+    coresMin: 1
+    coresMax: 16
+
+baseCommand: [cellranger, bamtofastq]
+
+inputs:
+  legacy:
+    type: boolean
+    default: false
+    doc: "Convert a BAM produced by Cell Ranger 1.0-1.1"
+    inputBinding:
+      prefix: --cr11
+      position: 1
+  bam_file:
+    type: File
+    inputBinding:
+      position: 2
+  output_path:
+    type: string
+    inputBinding:
+      position: 3
+      
+outputs:
+  output:
+    type: Directory
+    outputBinding:
+      glob: "$(inputs.output_path)"

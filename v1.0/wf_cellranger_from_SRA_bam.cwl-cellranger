@@ -92,7 +92,12 @@ outputs:
     outputSource: step_cellranger_count/output
 
 steps:
-
+  
+  step_download_data:
+    run: wget.cwl
+    in:
+      url: url
+      
   step_parse_samples:
     run: parse_samples.cwl
     in:
