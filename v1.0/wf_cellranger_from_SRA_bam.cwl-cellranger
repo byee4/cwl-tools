@@ -10,127 +10,48 @@ requirements:
 
 inputs:
 
-  aggr_nickname:
+  bam_file_url:
     type: string
-  aggr_norm_method:
-    type: string
-    default: "mapped"
-  assay_protocol:
-    type: string
-  contact_email:
-    type: string
-  experiment_nickname:
-    type: string
-  experiment_start_date:
-    type: string
-  experiment_summary:
-    type: string
-  extract_protocol_description:
-    type: string
-  growth_protocol_description:
-    type: string
-  investigator:
-    type: string
-  library_construction_protocol:
-    type: string
-  library_strategy:
-    type: string
-  organism:
-    type: string
-  pi_name:
-    type: string
-  processing_date:
-    type: string
-  samples:
-    type:
-      type: array
-      items:
-        type: record
-        fields:
-          library_nickname:
-            type: string
-          sample_id:
-            type: string?
-          bam_file:
-            type: File
-          expect_cells:
-            type: int
-          instrument_model:
-            type: string
-          read1_length:
-            type: int
-          read2_length:
-            type: int
-          library_prep:
-            type: string
-          characteristics:
-            type:
-              type: array
-              items:
-                type: record
-                name: characteristics
-                fields:
-                  name:
-                    type: string
-                  value:
-                    type: string
-  sequencing_center:
-    type: string
-  sequencing_date:
+  nickname:
     type: string
   transcriptome:
     type: Directory
-  treatment_protocol_description:
-    type: string
-
+  legacy:
+    type: boolean
+  expect_cells: 
+    type: int
+    
 outputs:
-  output_aggr_dir:
-    type: Directory
-    outputSource: step_cellranger_aggr/output_dir
+  bam_file:
+    type: File
+    outputSource: step_download_data/output
   output_single_dir:
-    type: Directory[]
+    type: Directory
     outputSource: step_cellranger_count/output
-
-steps:
   
+steps:
+    
   step_download_data:
     run: wget.cwl
     in:
-      url: url
-      
-  step_parse_samples:
-    run: parse_samples.cwl
-    in:
-      samples: samples
-    out:
-      - library_nicknames
-      - sample_ids
-      - fastq_dirs
-      - expect_cells
-
-  step_cellranger_count:
-    run: cellranger_count.cwl
-    scatter:
-      - library_nickname
-      - sample_id
-      - fastqs
-      - expect_cells
-    scatterMethod: dotproduct
-    in:
-      library_nickname: step_parse_samples/library_nicknames
-      sample_id: step_parse_samples/sample_ids
-      fastqs: step_parse_samples/fastq_dirs
-      transcriptome: transcriptome
-      expect_cells: step_parse_samples/expect_cells
+      url: bam_file_url
     out:
       - output
-
-  step_cellranger_aggr:
-    run: cellranger_aggr.cwl
+  
+  step_cellranger_bamtofastq:
+    run: bamtofastq.cwl
     in:
-      aggr_nickname: aggr_nickname
-      normalize: aggr_norm_method
-      h5_basedirs: step_cellranger_count/output
+      legacy: legacy
+      bam_file: step_download_data/output
     out:
-      - output_dir
-      - aggregate_csv
+      - output
+  
+  step_cellranger_count:
+    run: cellranger_count.cwl
+    in:
+      library_nickname: nickname
+      fastqs: step_cellranger_bamtofastq/output
+      transcriptome: transcriptome
+      expect_cells: expect_cells
+    out:
+      - output

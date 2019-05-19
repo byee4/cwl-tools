@@ -16,63 +16,23 @@ inputs:
       items:
         type: record
         fields:
-          library_nickname:
-            type: string
-          library_prep:
-            type: string
-          sample_id:
-            type: string?
-          expect_cells:
-            type: int
           bam_file:
             type: File
-          read1_length:
-            type: int
-          read2_length:
-            type: int
-          instrument_model:
-            type: string
-          characteristics:
-            type:
-              type: array
-              items:
-                type: record
-                name: characteristics
-                fields:
-                  name:
-                    type: string
-                  value:
-                    type: string
 
 outputs:
 
-  library_nicknames:
+  bam_files:
     type: string[]
-  sample_ids:
-    type: string[]
-  fastq_dirs:
-    type: Directory[]
-  expect_cells:
-    type: int[]
-
+    
 expression: |
    ${
-      var library_nicknames = [];
-      var sample_ids = [];
-      var fastq_dirs = [];
-      var expect_cells = [];
+      var bam_files = [];
 
       for (var i=0; i<inputs.samples.length; i++) {
-        library_nicknames.push(inputs.samples[i].library_nickname);
-        sample_ids.push(inputs.samples[i].sample_id);
-        fastq_dirs.push(inputs.samples[i].fastq_dir);
-        expect_cells.push(inputs.samples[i].expect_cells);
+        bam_files.push(inputs.samples[i].bam_file);
       }
       return {
-        'library_nicknames':library_nicknames,
-        'sample_ids':sample_ids,
-        'fastq_dirs':fastq_dirs,
-        'expect_cells':expect_cells
+        'bam_files':bam_files,
       };
     }
 

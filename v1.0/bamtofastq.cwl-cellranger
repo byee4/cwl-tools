@@ -25,12 +25,30 @@ inputs:
     inputBinding:
       position: 2
   output_path:
+    default: ""
     type: string
     inputBinding:
       position: 3
+      valueFrom: |
+        ${
+          if (inputs.output_path == "") {
+            return inputs.bam_file.nameroot;
+          }
+          else {
+            return inputs.output_path;
+          }
+        }
       
 outputs:
   output:
     type: Directory
     outputBinding:
-      glob: "$(inputs.output_path)"
+      glob: |
+        ${
+          if (inputs.output_path == "") {
+            return inputs.bam_file.nameroot;
+          }
+          else {
+            return inputs.output_path;
+          }
+        }

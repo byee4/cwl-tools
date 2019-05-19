@@ -14,10 +14,20 @@ baseCommand: [wget]
 
 inputs:
   output_file_name:
+    default: ""
     type: string
     inputBinding:
       prefix: -O
       position: 1
+      valueFrom: |
+        ${
+          if (inputs.output_file_name == "") {
+            return inputs.url.substring(inputs.url.lastIndexOf('/')+1);
+          }
+          else {
+            return inputs.output_file_name;
+          }
+        }
   url:
     type: string
     inputBinding:
@@ -27,4 +37,12 @@ outputs:
   output:
     type: File
     outputBinding:
-      glob: "$(inputs.output_file_name)"
+      glob: |
+        ${
+          if (inputs.output_file_name == "") {
+            return inputs.url.substring(inputs.url.lastIndexOf('/')+1);
+          }
+          else {
+            return inputs.output_file_name;
+          }
+        }
