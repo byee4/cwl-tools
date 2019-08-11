@@ -48,9 +48,7 @@ inputs:
               type: string
             adapters:
               type: File
-  blacklist_file: 
-    type: File
-    
+
 outputs:
 
 
@@ -174,9 +172,9 @@ outputs:
   output_ip_b1_pre_rmdup_sorted_bam:
     type: File[]
     outputSource: step_get_peaks/output_ip_b1_pre_rmdup_sorted_bam
-  output_ip_b1_barcodecollapsese_metrics:
-    type: File[]
-    outputSource: step_get_peaks/output_ip_b1_barcodecollapsese_metrics
+  # output_ip_b1_barcodecollapsese_metrics:
+  #   type: File[]
+  #   outputSource: step_get_peaks/output_ip_b1_barcodecollapsese_metrics
   output_ip_b1_rmdup_sorted_bam:
     type: File[]
     outputSource: step_get_peaks/output_ip_b1_rmdup_sorted_bam
@@ -184,9 +182,9 @@ outputs:
   output_input_b1_pre_rmdup_sorted_bam:
     type: File[]
     outputSource: step_get_peaks/output_input_b1_pre_rmdup_sorted_bam
-  output_input_b1_barcodecollapsese_metrics:
-    type: File[]
-    outputSource: step_get_peaks/output_input_b1_barcodecollapsese_metrics
+  # output_input_b1_barcodecollapsese_metrics:
+  #   type: File[]
+  #   outputSource: step_get_peaks/output_input_b1_barcodecollapsese_metrics
   output_input_b1_rmdup_sorted_bam:
     type: File[]
     outputSource: step_get_peaks/output_input_b1_rmdup_sorted_bam
@@ -222,28 +220,14 @@ outputs:
     type: File[]
     outputSource: step_get_peaks/output_compressed_peaks
 
-  ### Downstream ###
-  
-  output_blacklist_removed_bed:
-    type: File[]
-    outputSource: step_get_peaks/output_blacklist_removed_bed
-  output_narrowpeak:
-    type: File[]
-    outputSource: step_get_peaks/output_narrowpeak
-  output_fixed_bed:
-    type: File[]
-    outputSource: step_get_peaks/output_fixed_bed
-  output_bigbed:
-    type: File[]
-    outputSource: step_get_peaks/output_bigbed
-    
+
 steps:
 
 ###########################################################################
 # Upstream
 ###########################################################################
   step_get_peaks:
-    run: wf_get_peaks_se.cwl
+    run: wf_get_peaks_nostats_se.cwl
     scatter: sample
     in:
       dataset: dataset
@@ -252,7 +236,6 @@ steps:
       species: species
       chrom_sizes: chrom_sizes
       sample: samples
-      blacklist_file: blacklist_file
     out: [
       output_ip_b1_demuxed_fastq_r1,
       output_input_b1_demuxed_fastq_r1,
@@ -276,13 +259,13 @@ steps:
       output_ip_b1_mapgenome_stats,
       output_ip_b1_mapgenome_star_settings,
       output_ip_b1_pre_rmdup_sorted_bam,
-      output_ip_b1_barcodecollapsese_metrics,
+      # output_ip_b1_barcodecollapsese_metrics,
       output_ip_b1_rmdup_sorted_bam,
       output_input_b1_mapgenome_mapped_to_genome,
       output_input_b1_mapgenome_stats,
       output_input_b1_mapgenome_star_settings,
       output_input_b1_pre_rmdup_sorted_bam,
-      output_input_b1_barcodecollapsese_metrics,
+      # output_input_b1_barcodecollapsese_metrics,
       output_input_b1_rmdup_sorted_bam,
       output_ip_pos_bw,
       output_ip_neg_bw,
@@ -290,9 +273,5 @@ steps:
       output_input_neg_bw,
       output_clipper_bed,
       output_inputnormed_peaks,
-      output_compressed_peaks,
-      output_blacklist_removed_bed,
-      output_narrowpeak,
-      output_fixed_bed,
-      output_bigbed
+      output_compressed_peaks
     ]

@@ -17,51 +17,28 @@ requirements:
     tmpdirMin: 8000
     outdirMin: 8000
 
-baseCommand: [umi_tools, extract]
-arguments: ["--random-seed", "1"]
+baseCommand: [cat]
 inputs:
-
-  # stdin:
-  #   type: File
-  #   inputBinding:
-  #     position: 1
-  #     prefix: --stdin
-
-  bc_pattern:
-    type: string
-    default: "NNNNNNNNNN"
-    inputBinding:
-      position: 2
-      prefix: --bc-pattern
-    doc: "10 nt randomer"
-
-  log:
-    type: string
-    default: ""
-    inputBinding:
-      position: 3
-      prefix: --log
-      valueFrom: |
-        ${
-          if (inputs.log == "") {
-            return inputs.dataset + "." + inputs.reads.name + ".---.--.metrics";
-          }
-          else {
-            return inputs.log;
-          }
-        }
 
   dataset:
     type: string
-    inputBinding:
-      position: 4
-
+    
+  reads:
+    type:
+      type: record
+      fields:
+        read1:
+          type: File
+          inputBinding:
+            position: 1
+        name:
+          type: string
+          
   stdout:
     type: string
     default: ""
     inputBinding:
-      position: 4
-      prefix: --stdout
+      position: 2
       valueFrom: |
         ${
           if (inputs.stdout == "") {
@@ -72,17 +49,7 @@ inputs:
           }
         }
 
-  reads:
-    type:
-      type: record
-      fields:
-        read1:
-          type: File
-          inputBinding:
-            position: 1
-            prefix: --stdin
-        name:
-          type: string
+  
 
 outputs:
 
